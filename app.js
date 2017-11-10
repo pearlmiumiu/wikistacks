@@ -8,7 +8,8 @@ var morgan = require('morgan');
  var path = require('path');
 // var mime = require('mime');
  var bodyParser = require('body-parser');
-var socketio = require('socket.io');
+//var socketio = require('socket.io');
+var models = require('./models');
 
 // templating boilerplate setup
 // instance, which we'll want to use to add Markdown support later.
@@ -29,15 +30,27 @@ app.use(bodyParser.json()); // would be for AJAX requests
 
 
 // start the server
-var server = app.listen(1337, function(){
-  console.log('listening on port 1337');
-});
-var io = socketio.listen(server);
+models.User.sync({})
+.then(function () {
+    return models.Page.sync({})
+})
+.then(function () {
+    // make sure to replace the name below with your express app
+    app.listen(1337, function(){
+  	console.log('listening on port 1337');
+	});
+    
+})
+.catch(console.error);
+
+
+ 
+//var io = socketio.listen(server);
 
  app.use(express.static(path.join(__dirname, '/public')));
 
 // // modular routing that uses io inside it
- app.use('/', makesRouter(io));
+ app.use('/', makesRouter);
 
 
 // // manually-written static file middleware
