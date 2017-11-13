@@ -8,12 +8,18 @@ var makesRouter = require('./routes');
 var path = require('path');
 // var mime = require('mime');
 var bodyParser = require('body-parser');
-var socketio = require('socket.io');
+//var socketio = require('socket.io');
+var models = require('./models');
 
 // templating boilerplate setup
-var env = nunjucks.configure('views', { noCache: true }); // where to find the views, caching off
-app.set('view engine', 'html'); // what file extension do our templates have
-app.engine('html', nunjucks.render); // how to render html templates
+// instance, which we'll want to use to add Markdown support later.
+var env = nunjucks.configure('views', {noCache: true});
+// have res.render work with html files
+app.set('view engine', 'html');
+// when res.render works with html files, have it use nunjucks to do so
+app.engine('html', nunjucks.render);
+
+
 
 // logging middleware
 app.use(morgan('dev'));
@@ -22,20 +28,25 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: true })); // for HTML form submits
 app.use(bodyParser.json()); // would be for AJAX requests
 
-// start the server
-var server = app.listen(1337, function(){
-  console.log('listening on port 1337');
-});
-var io = socketio.listen(server);
+
+// sync the database and start the server
+models.db.sync({}) // models.db.sync({force: true})
+.then(function () {
+    app.listen(1337, function() {
+  	console.log('listening on port 1337');
+	});
+})
+.catch(console.error);
+
+
+
+//var io = socketio.listen(server);
 
 app.use(express.static(path.join(__dirname, '/public')));
 
-app.get('/', function(req, res, next) {
-  res.send('index.html');
-})
+// // modular routing that uses io inside it
+app.use('/', makesRouter);
 
-// modular routing that uses io inside it
-app.use('/', makesRouter(io));
 
 // // manually-written static file middleware
 // app.use(function(req, res, next){
