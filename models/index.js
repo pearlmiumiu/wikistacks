@@ -15,6 +15,11 @@ var Page = db.define('page', {
         validate: {
           isUrl: true
         }
+       //  get route(){
+       //    const wiki='/wiki/';
+       //    return wiki + this.urlTitle
+         
+       // }
     },
     content: {
         type: Sequelize.TEXT,
@@ -27,7 +32,15 @@ var Page = db.define('page', {
       type: Sequelize.DATE,
       defaultValue: Sequelize.NOW
     }
+},{
+    getterMethods: {
+      route(){
+        return '/wiki/'+ this.urlTitle;
+      }
+
+    }
 });
+
 
 var User = db.define('user', {
     name: {
