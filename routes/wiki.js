@@ -14,6 +14,8 @@ router.get('/', function(req, res, next) {
   res.redirect('/');
 });
 
+
+
 router.post('/', function(req, res, next) {
   var page = Page.build({
   	title: req.body.title[2],
@@ -32,6 +34,12 @@ router.post('/', function(req, res, next) {
 
 router.get('/add', function(req, res, next) {
   res.render('addpage');
+});
+
+router.get('/:page_title', function(req, res, next){
+
+  res.send(req.param.page_title);
+
 });
 
 
