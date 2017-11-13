@@ -12,11 +12,6 @@ var Page = db.define('page', {
         validate: {
           isUrl: true
         }
-       //  get route(){
-       //    const wiki='/wiki/';
-       //    return wiki + this.urlTitle
-         
-       // }
     },
     content: {
         type: Sequelize.TEXT,
@@ -29,14 +24,29 @@ var Page = db.define('page', {
       type: Sequelize.DATE,
       defaultValue: Sequelize.NOW
     }
-},{
-    getterMethods: {
-      route(){
+
+} , {
+  getterMethods: {
+      route() {
         return '/wiki/'+ this.urlTitle;
       }
-
+    },
+    hooks: {
+      beforeValidate: (page, options) => {
+        function generateUrlTitle (title) {
+          if (title) {
+            // Removes all non-alphanumeric characters from title
+            // And make whitespace underscore
+            this.urlTitle = this.title.replace(/\s+/g, '_').replace(/\W/g, '');
+          } else {
+            // Generates random 5 letter string
+            this.urlTitle = Math.random().toString(36).substring(2, 7);
+          }
+        }  
+      }
     }
 });
+
 
 
 var User = db.define('user', {
