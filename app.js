@@ -3,7 +3,7 @@ var express = require('express');
 var app = express();
 var morgan = require('morgan');
 var nunjucks = require('nunjucks');
-var makesRouter = require('./routes');
+var router = require('./routes');
 // var fs = require('fs');
 var path = require('path');
 // var mime = require('mime');
@@ -45,7 +45,7 @@ models.db.sync({}) // models.db.sync({force: true})
 app.use(express.static(path.join(__dirname, '/public')));
 
 // // modular routing that uses io inside it
-app.use('/', makesRouter);
+app.use('/', router);
 
 
 // // manually-written static file middleware
