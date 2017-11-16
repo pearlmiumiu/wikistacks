@@ -4,12 +4,8 @@ var app = express();
 var morgan = require('morgan');
 var nunjucks = require('nunjucks');
 var router = require('./routes');
-// var fs = require('fs');
-var path = require('path');
-// var mime = require('mime');
 var bodyParser = require('body-parser');
-//var socketio = require('socket.io');
-var models = require('./models');
+//var models = require('./models');
 
 // templating boilerplate setup
 // instance, which we'll want to use to add Markdown support later.
@@ -20,6 +16,9 @@ app.set('view engine', 'html');
 app.engine('html', nunjucks.render);
 
 
+///?????????????????????????????????????????????????????????????
+var AutoEscapeExtension=require('nunjucks-audoescape')(nunjucks);
+env.addExtension('AutoEscapeExtension', new AutoEscapeExtension(env));
 
 // logging middleware
 app.use(morgan('dev'));
@@ -29,7 +28,19 @@ app.use(bodyParser.urlencoded({ extended: true })); // for HTML form submits
 app.use(bodyParser.json()); // would be for AJAX requests
 
 
-// sync the database and start the server
+app.use('/wiki', wikiRouter);
+app.use('/users', usersRouter);
+
+
+app.use(express.static(__dirname+'/node_modules'));
+app.use(express.static(__dirname+'/public'));
+
+app.get('/', function(req, res){
+	res.redirect('/wiki')
+})
+
+///?????????????????????????????????
+/*// sync the database and start the server
 models.db.sync({}) // models.db.sync({force: true})
 .then(function () {
     app.listen(1337, function() {
@@ -37,23 +48,14 @@ models.db.sync({}) // models.db.sync({force: true})
 	});
 })
 .catch(console.error);
+*/
+
+app.use(function(err, req, res, next){
+	console.error(err);
+	res.status(err.status || 500).send(err.message|| 'Internal server Error');
+})
 
 
 
-//var io = socketio.listen(server);
 
-app.use(express.static(path.join(__dirname, '/public')));
-
-// // modular routing that uses io inside it
-app.use('/', router);
-
-
-// // manually-written static file middleware
-// app.use(function(req, res, next){
-//   var mimeType = mime.lookup(req.path);
-//   fs.readFile('./public' + req.path, function(err, fileBuffer){
-//     if (err) return next();
-//     res.header('Content-Type', mimeType);
-//     res.send(fileBuffer);
-//   });
-// });
+module.exports=app;
