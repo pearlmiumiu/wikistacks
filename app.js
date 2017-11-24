@@ -39,17 +39,17 @@ app.get('/', function(req, res){
 	res.redirect('/wiki')
 })
 
-///?????????????????????????????????
-/*// sync the database and start the server
-models.db.sync({}) // models.db.sync({force: true})
+
+// sync the database and start the server
+/*models.db.sync({}) // models.db.sync({force: true})
 .then(function () {
     app.listen(1337, function() {
   	console.log('listening on port 1337');
 	});
 })
-.catch(console.error);
-*/
+.catch(console.error);*/
 
+//err middleware
 app.use(function(err, req, res, next){
 	console.error(err);
 	res.status(err.status || 500).send(err.message|| 'Internal server Error');

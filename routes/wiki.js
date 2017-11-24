@@ -19,9 +19,10 @@ router.get('/', function(req, res, next) {
 });
 
 //POST /wiki
-
+//req==always URL
 router.post('/', function(req, res, next){
-  User.findOrCreate({
+  User.findOrCreate({ //if we find, we resove using the email/name
+                      //if not find, we create
     where: {
       email: req.body.authorEmail,
       name: req.body.authorName
@@ -41,14 +42,14 @@ router.post('/', function(req, res, next){
   .catch(next);
 });
 
-/* //post wiki 
+ //post wiki 
 router.post('/', function(req, res, next) {
   var page = Page.build({
   	title: req.body.title[2],
   	content: req.body.title[3]
   });
    //console.log('Page', page);
-    page.save()
+    page.save() //async return a promise so the page will be saved in the database
     .then(function(savedPage){
     	res.redirect(savedPage.route);
     })
@@ -57,7 +58,7 @@ router.post('/', function(req, res, next) {
     });
   //console.log(req.body);
 });
-*/
+
 
 
 //get /wiki/add
@@ -80,7 +81,7 @@ router.get('/:urlTitle', function(req, res, next){
   var urlTitleOfAPage=req.params.urlTitle;
   Page.findOne({ // returns the page instance as a promise (find it using the urlTitle)
     where: {
-      urlTitle: 'req.params.urlTitle'
+      urlTitle: urlTitleOfAPage
     }
   })
   .then(function(foundPage) {

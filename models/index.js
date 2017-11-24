@@ -112,8 +112,9 @@ var User = db.define('user', {
     },
     email: {
         type: Sequelize.STRING,
-        allowNull: false,
-        validate: {
+        allowNull: false,  //the database(wikistack) validate==set this rule
+        unique: true,
+        validate: { //sequelize itself validate this info
           isEmail: true
         }
     }
